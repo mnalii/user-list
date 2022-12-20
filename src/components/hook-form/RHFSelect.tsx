@@ -1,0 +1,63 @@
+import { forwardRef } from 'react';
+import { useFormContext, Controller } from 'react-hook-form';
+import { TextField, TextFieldProps } from '@mui/material';
+
+// import Select from '../select/Select';
+
+type RHFSelectProps = TextFieldProps & {
+  name: string;
+  native?: boolean;
+  maxHeight?: boolean | number;
+  children: React.ReactNode;
+};
+
+export default function RHFSelect({
+  name,
+  native,
+  maxHeight = 220,
+  helperText,
+  children,
+  ...other
+}: RHFSelectProps) {
+  const { control } = useFormContext();
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <TextField
+          {...field}
+          select
+          fullWidth
+          SelectProps={{
+            native,
+            MenuProps: {
+              PaperProps: {
+                sx: {
+                  ...(!native && {
+                    px: 1,
+                    maxHeight:
+                      typeof maxHeight === 'number' ? maxHeight : 'unset',
+                    '& .MuiMenuItem-root': {
+                      px: 1,
+                      borderRadius: 0.75,
+                      typography: 'body2',
+                      textTransform: 'capitalize',
+                    },
+                  }),
+                },
+              },
+            },
+            sx: { textTransform: 'capitalize' },
+          }}
+          error={!!error}
+          helperText={error ? error?.message : helperText}
+          {...other}
+        >
+          {children}
+        </TextField>
+      )}
+    />
+  );
+}
